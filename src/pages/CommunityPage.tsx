@@ -1,6 +1,6 @@
 import { MessageCircle, UserRound, UsersRound } from 'lucide-react'
 
-export function CommunityPage() {
+export function CommunityPage({ onOpenProfile }: { onOpenProfile: () => void }) {
   return (
     <main className="page-content section-page">
       <section className="section-page-heading">
@@ -17,21 +17,21 @@ export function CommunityPage() {
           <span>Comunidade</span>
           <strong>Membros da casa</strong>
           <p>Diretório opcional, respeitando o que cada pessoa autorizar compartilhar.</p>
-          <button>Em construção</button>
+          <span className="status-note">Em validação</span>
         </article>
         <article className="terreiro-feature">
           <MessageCircle size={25} />
           <span>Avisos</span>
           <strong>Comunicados da casa</strong>
           <p>Área futura para recados e orientações dos responsáveis.</p>
-          <button>Em construção</button>
+          <span className="status-note">Em validação</span>
         </article>
         <article className="terreiro-feature">
           <UserRound size={25} />
           <span>Perfil</span>
           <strong>Seus dados</strong>
           <p>Acesse suas informações e o nível de permissão da sua conta.</p>
-          <button>Ver perfil</button>
+          <button onClick={onOpenProfile}>Ver perfil</button>
         </article>
       </section>
     </main>
