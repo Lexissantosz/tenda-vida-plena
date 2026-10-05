@@ -996,3 +996,295 @@ button { border: 0; }
     display: none;
   }
 }
+
+
+/* Prototype role preview */
+.prototype-access {
+  margin-top: 28px;
+  padding: 16px;
+  border: 1px dashed rgba(68,54,32,.22);
+  border-radius: 14px;
+  background: rgba(255,253,248,.62);
+}
+
+.prototype-access > div:first-child {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 12px;
+}
+
+.prototype-access > div:first-child span {
+  color: #81776b;
+  font-size: .78rem;
+  line-height: 1.4;
+}
+
+.prototype-role-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.prototype-role-grid button {
+  display: grid;
+  gap: 3px;
+  text-align: left;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: #fffdf8;
+  border: 1px solid rgba(68,54,32,.12);
+  cursor: pointer;
+  color: #2b2823;
+}
+
+.prototype-role-grid button:hover {
+  border-color: #b88b2c;
+}
+
+.prototype-role-grid span {
+  color: #80776b;
+  font-size: .75rem;
+  line-height: 1.35;
+}
+
+/* House administration */
+.admin-page {
+  padding-top: 42px;
+}
+
+.admin-welcome {
+  align-items: center;
+}
+
+.admin-summary {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-summary span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+.approval-list {
+  display: grid;
+  gap: 10px;
+}
+
+.approval-card {
+  display: grid;
+  grid-template-columns: auto minmax(210px,1fr) minmax(150px,.5fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
+.approval-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  color: var(--gold);
+}
+
+.approval-person {
+  display: grid;
+  gap: 4px;
+}
+
+.approval-person span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: .78rem;
+}
+
+.approval-person small {
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.approval-role {
+  display: grid;
+  gap: 3px;
+}
+
+.approval-role span {
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.approval-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.approve-button,
+.reject-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: .8rem;
+}
+
+.approve-button {
+  background: var(--olive);
+  color: white;
+}
+
+.reject-button {
+  background: transparent;
+  color: #8e4a40;
+  border: 1px solid rgba(142,74,64,.2);
+}
+
+.member-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 230px;
+  padding: 9px 11px;
+  border-radius: 11px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+}
+
+.member-search input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.member-table {
+  display: grid;
+}
+
+.member-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr .7fr;
+  gap: 16px;
+  align-items: center;
+  padding: 13px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.member-row-head {
+  color: var(--muted);
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 700;
+}
+
+.role-badge {
+  width: max-content;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.role-badge.admin {
+  background: rgba(184,139,44,.15);
+  color: var(--gold);
+}
+
+.admin-empty {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 5px;
+  min-height: 180px;
+  color: var(--muted);
+}
+
+.admin-empty svg {
+  color: var(--olive);
+}
+
+.decision-history {
+  display: grid;
+  gap: 6px;
+}
+
+.decision-history p {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: .82rem;
+}
+
+@media (max-width: 900px) {
+  .approval-card {
+    grid-template-columns: auto 1fr;
+  }
+
+  .approval-role,
+  .approval-actions {
+    grid-column: 2;
+  }
+
+  .members-heading {
+    flex-direction: column;
+  }
+
+  .member-search {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .approval-card {
+    grid-template-columns: 1fr;
+  }
+
+  .approval-avatar {
+    display: none;
+  }
+
+  .approval-role,
+  .approval-actions {
+    grid-column: 1;
+  }
+
+  .approval-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .member-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 13px 0;
+  }
+
+  .member-row-head {
+    display: none;
+  }
+
+  .admin-summary {
+    margin-top: 12px;
+  }
+}
