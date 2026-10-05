@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react'
+import { AuthFlow } from './components/AuthFlow'
+import type { AuthScreen, SessionUser } from './types/auth'
 import {
   BookOpen,
   CalendarDays,
@@ -66,6 +68,8 @@ const navItems = [
 type Theme = 'claro' | 'terra' | 'noturno'
 
 function App() {
+  const [authScreen, setAuthScreen] = useState<AuthScreen>('login')
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null)
   const [activeNav, setActiveNav] = useState('Início')
   const [searchOpen, setSearchOpen] = useState(false)
   const [pledged, setPledged] = useState<number[]>([])
@@ -81,6 +85,21 @@ function App() {
 
   const cycleTheme = () => {
     setTheme((current) => current === 'claro' ? 'terra' : current === 'terra' ? 'noturno' : 'claro')
+  }
+
+  const handleLogin = (user: SessionUser) => {
+    setSessionUser(user)
+    setAuthScreen('app')
+  }
+
+  if (authScreen !== 'app' || !sessionUser) {
+    return (
+      <AuthFlow
+        screen={authScreen === 'app' ? 'login' : authScreen}
+        onScreenChange={setAuthScreen}
+        onLogin={handleLogin}
+      />
+    )
   }
 
   return (
@@ -155,7 +174,7 @@ function App() {
             </div>
             <button className="profile-chip">
               <CircleUserRound size={24} />
-              <span>Meu perfil</span>
+              <span>{sessionUser.name}</span>
             </button>
           </section>
 
