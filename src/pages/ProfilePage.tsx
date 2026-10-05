@@ -1,4 +1,4 @@
-import { Mail, ShieldCheck, UserRound } from 'lucide-react'
+import { LogOut, Mail, ShieldCheck, UserRound } from 'lucide-react'
 import type { SessionUser } from '../types/auth'
 
 const roleNames = {
@@ -7,7 +7,7 @@ const roleNames = {
   system_admin: 'Administrador do sistema',
 }
 
-export function ProfilePage({ user }: { user: SessionUser }) {
+export function ProfilePage({ user, onSwitchProfile }: { user: SessionUser; onSwitchProfile: () => void }) {
   return (
     <main className="page-content section-page">
       <section className="section-page-heading">
@@ -25,6 +25,13 @@ export function ProfilePage({ user }: { user: SessionUser }) {
           <p><Mail size={16} /> {user.email}</p>
           <p><ShieldCheck size={16} /> {roleNames[user.role]}</p>
         </div>
+      </section>
+
+      <section className="panel prototype-switch-panel">
+        <p className="eyebrow">Somente no protótipo</p>
+        <h3>Trocar perfil de teste</h3>
+        <p>Use isto para simular o fluxo entre membro e administração sem apagar os chamados e entregas pendentes desta sessão.</p>
+        <button onClick={onSwitchProfile}><LogOut size={17} /> Voltar para seleção de perfil</button>
       </section>
     </main>
   )
