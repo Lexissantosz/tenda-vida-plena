@@ -153,9 +153,17 @@ function App() {
     if (activeView === 'Estudos') return <StudiesPage />
     if (activeView === 'Agenda') return <CalendarPage />
     if (activeView === 'Pontos') return <PointsPage />
-    if (activeView === 'Doações') return <DonationsPage />
-    if (activeView === 'Comunidade') return <CommunityPage />
-    if (activeView === 'Perfil') return <ProfilePage user={sessionUser} />
+    if (activeView === 'Doações') return <DonationsPage onOpenCalls={() => navigate('Terreiro')} />
+    if (activeView === 'Comunidade') return <CommunityPage onOpenProfile={() => navigate('Perfil')} />
+    if (activeView === 'Perfil') return (
+      <ProfilePage
+        user={sessionUser}
+        onSwitchProfile={() => {
+          setSessionUser(null)
+          setAuthScreen('login')
+        }}
+      />
+    )
     if (activeView === 'Configurações') {
       return <SettingsPage theme={theme} onThemeChange={setTheme} />
     }
