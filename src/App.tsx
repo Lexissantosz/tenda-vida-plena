@@ -2,6 +2,10 @@ import { useMemo, useState } from 'react'
 import { AuthFlow } from './components/AuthFlow'
 import { MemberApprovalPanel } from './components/MemberApprovalPanel'
 import { CreateCallModal, type NewCall } from './components/CreateCallModal'
+import { StudiesPage } from './pages/StudiesPage'
+import { CalendarPage } from './pages/CalendarPage'
+import { PointsPage } from './pages/PointsPage'
+import { TerreiroPage } from './pages/TerreiroPage'
 import type { AuthScreen, SessionUser } from './types/auth'
 import {
   BookOpen,
@@ -143,7 +147,7 @@ function App() {
               <span>{label}</span>
             </button>
           ))}
-          <button className="side-link" onClick={() => setActiveNav('Doações')}>
+          <button className="side-link" onClick={() => { setAdminView('home'); setActiveNav('Doações') }}>
             <HandHeart size={19} />
             <span>Doações</span>
           </button>
@@ -199,6 +203,14 @@ function App() {
 
 {adminView === 'members' && canManageHouse ? (
           <MemberApprovalPanel />
+        ) : activeNav === 'Estudos' ? (
+          <StudiesPage />
+        ) : activeNav === 'Agenda' ? (
+          <CalendarPage />
+        ) : activeNav === 'Pontos' ? (
+          <PointsPage />
+        ) : activeNav === 'Terreiro' ? (
+          <TerreiroPage role={sessionUser.role} onCreateCall={() => setCallModalOpen(true)} />
         ) : (
         <main className="page-content">
           <section className="welcome-row">
@@ -339,13 +351,13 @@ function App() {
             <button
               key={label}
               className={activeNav === label ? 'mobile-nav-button active' : 'mobile-nav-button'}
-              onClick={() => setActiveNav(label)}
+              onClick={() => { setAdminView('home'); setActiveNav(label) }}
             >
               <Icon size={21} />
               <span>{label}</span>
             </button>
           ))}
-          <button className="mobile-nav-button" onClick={() => setActiveNav('Mais')}>
+          <button className="mobile-nav-button" onClick={() => { setAdminView('home'); setActiveNav('Mais') }}>
             <Menu size={21} />
             <span>Mais</span>
           </button>
