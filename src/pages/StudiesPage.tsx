@@ -10,6 +10,7 @@ export function StudiesPage() {
   const [query, setQuery] = useState('')
   const [favorites, setFavorites] = useState<number[]>([])
   const [selectedStudy, setSelectedStudy] = useState<StudyItem | null>(null)
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
 
   const filtered = useMemo(() => {
@@ -24,6 +25,32 @@ export function StudiesPage() {
 
   const toggleFavorite = (id: number) => {
     setFavorites((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
+  }
+
+  if (selectedStudy && selectedLesson) {
+    return (
+      <main className="page-content section-page">
+        <button className="back-button" onClick={() => setSelectedLesson(null)}>
+          <ArrowLeft size={17} /> Voltar às aulas
+        </button>
+
+        <section className="panel lesson-detail">
+          <span className={selectedStudy.type === 'Fundamento da casa' ? 'content-tag house' : 'content-tag'}>
+            {selectedStudy.type}
+          </span>
+          <h1>{selectedLesson}</h1>
+          <p>
+            Conteúdo demonstrativo da aula de <strong>{selectedStudy.title}</strong>. O texto real será inserido
+            depois da revisão e autorização da Tenda.
+          </p>
+          <div className="lesson-placeholder">
+            <BookOpen size={28} />
+            <strong>Espaço da aula</strong>
+            <span>Aqui podem entrar texto, imagens, PDFs relacionados, anotações e progresso.</span>
+          </div>
+        </section>
+      </main>
+    )
   }
 
   if (selectedStudy) {
@@ -42,10 +69,10 @@ export function StudiesPage() {
 
           <div className="lesson-list">
             {selectedStudy.lessons.map((lesson, index) => (
-              <button className="lesson-row" key={lesson}>
+              <button className="lesson-row" key={lesson} onClick={() => setSelectedLesson(lesson)}>
                 <span>{index + 1}</span>
                 <strong>{lesson}</strong>
-                <small>{index < Math.ceil(selectedStudy.lessons.length * selectedStudy.progress / 100) ? 'Visto' : 'Abrir aula'}</small>
+                <small>{index < Math.ceil(selectedStudy.lessons.length * selectedStudy.progress / 100) ? 'Reabrir aula' : 'Abrir aula'}</small>
               </button>
             ))}
           </div>
