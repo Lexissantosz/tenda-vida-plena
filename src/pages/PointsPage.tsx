@@ -1,26 +1,46 @@
 import { useMemo, useState } from 'react'
-import { ExternalLink, FileText, Search } from 'lucide-react'
+import { ArrowLeft, ExternalLink, FileText, Search } from 'lucide-react'
+import { prototypePoints } from '../data/prototypeData'
+import type { PointItem } from '../types/domain'
 
-const pointGroups = ['Todos', 'Caboclo', 'Preto-Velho', 'Erê', 'Exu', 'Pombagira', 'Outros']
-
-const points = [
-  { id: 1, title: 'Ponto de Caboclo', group: 'Caboclo', source: 'Referência a cadastrar pela casa', hasLyrics: true },
-  { id: 2, title: 'Ponto de Preto-Velho', group: 'Preto-Velho', source: 'Referência a cadastrar pela casa', hasLyrics: true },
-  { id: 3, title: 'Ponto de Erê', group: 'Erê', source: 'Referência a cadastrar pela casa', hasLyrics: false },
-]
+const groups = ['Todos', 'Caboclo', 'Preto-Velho', 'Erê', 'Exu', 'Pombagira', 'Outros']
 
 export function PointsPage() {
   const [group, setGroup] = useState('Todos')
   const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState<PointItem | null>(null)
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return points.filter((point) => {
+    return prototypePoints.filter((point) => {
       const matchesGroup = group === 'Todos' || point.group === group
-      const matchesQuery = !q || [point.title, point.group].some((value) => value.toLowerCase().includes(q))
+      const matchesQuery = !q || [point.title, point.group, point.lyrics].some((value) => value.toLowerCase().includes(q))
       return matchesGroup && matchesQuery
     })
   }, [group, query])
+
+  if (selected) {
+    return (
+      <main className="page-content section-page">
+        <button className="back-button" onClick={() => setSelected(null)}><ArrowLeft size={17} /> Voltar aos pontos</button>
+        <section className="panel point-detail">
+          <span className="content-tag">{selected.group}</span>
+          <h1>{selected.title}</h1>
+          <p className="point-source">{selected.source}</p>
+
+          <div className="lyrics-box">
+            <h3>Letra</h3>
+            <p>{selected.lyrics}</p>
+            <small>Texto demonstrativo do protótipo. A letra real será adicionada somente com o material autorizado pela casa.</small>
+          </div>
+
+          <a className="reference-button" href={selected.referenceUrl} target="_blank" rel="noreferrer">
+            <ExternalLink size={17} /> Abrir link de referência
+          </a>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="page-content section-page">
@@ -28,16 +48,16 @@ export function PointsPage() {
         <div>
           <p className="eyebrow">Pontos</p>
           <h1>Letras e referências organizadas</h1>
-          <p>O sistema pode guardar a letra autorizada pela casa e apontar para um link externo quando houver áudio ou vídeo de referência.</p>
+          <p>Você pode pesquisar pelo nome, pela linha ou até por um trecho da letra.</p>
         </div>
         <label className="section-search">
           <Search size={18} />
-          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar ponto..." />
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Nome ou trecho da letra..." />
         </label>
       </section>
 
       <div className="chip-row">
-        {pointGroups.map((item) => (
+        {groups.map((item) => (
           <button key={item} className={item === group ? 'filter-chip active' : 'filter-chip'} onClick={() => setGroup(item)}>
             {item}
           </button>
@@ -51,11 +71,11 @@ export function PointsPage() {
             <div className="point-page-copy">
               <span className="content-tag">{point.group}</span>
               <h3>{point.title}</h3>
-              <p>{point.source}</p>
+              <p>{point.lyrics}</p>
             </div>
             <div className="point-page-actions">
-              <button>{point.hasLyrics ? 'Abrir letra' : 'Adicionar letra'}</button>
-              <button><ExternalLink size={16} /> Link de referência</button>
+              <button onClick={() => setSelected(point)}>Abrir letra</button>
+              <a href={point.referenceUrl} target="_blank" rel="noreferrer"><ExternalLink size={16} /> Link de referência</a>
             </div>
           </article>
         ))}
