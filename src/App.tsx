@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { AuthFlow } from './components/AuthFlow'
+import { MemberApprovalPanel } from './components/MemberApprovalPanel'
 import type { AuthScreen, SessionUser } from './types/auth'
 import {
   BookOpen,
@@ -13,6 +14,7 @@ import {
   Moon,
   Search,
   Settings2,
+  ShieldCheck,
   Sun,
   TentTree,
   UsersRound,
@@ -74,6 +76,7 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [pledged, setPledged] = useState<number[]>([])
   const [theme, setTheme] = useState<Theme>('claro')
+  const [adminView, setAdminView] = useState<'home' | 'members'>('home')
 
   const pledgedSet = useMemo(() => new Set(pledged), [pledged])
 
@@ -89,6 +92,7 @@ function App() {
 
   const handleLogin = (user: SessionUser) => {
     setSessionUser(user)
+    setAdminView('home')
     setAuthScreen('app')
   }
 
@@ -117,8 +121,8 @@ function App() {
           {navItems.map(({ label, icon: Icon }) => (
             <button
               key={label}
-              className={activeNav === label ? 'side-link active' : 'side-link'}
-              onClick={() => setActiveNav(label)}
+              className={adminView === 'home' && activeNav === label ? 'side-link active' : 'side-link'}
+              onClick={() => { setAdminView('home'); setActiveNav(label) }}
             >
               <Icon size={19} />
               <span>{label}</span>
@@ -128,6 +132,15 @@ function App() {
             <HandHeart size={19} />
             <span>Doações</span>
           </button>
+          {sessionUser.role === 'house_admin' && (
+            <button
+              className={adminView === 'members' ? 'side-link active' : 'side-link'}
+              onClick={() => setAdminView('members')}
+            >
+              <ShieldCheck size={19} />
+              <span>Membros e acessos</span>
+            </button>
+          )}
         </nav>
 
         <div className="sidebar-bottom">
@@ -165,6 +178,9 @@ function App() {
           </div>
         )}
 
+{adminView === 'members' && sessionUser.role === 'house_admin' ? (
+          <MemberApprovalPanel />
+        ) : (
         <main className="page-content">
           <section className="welcome-row">
             <div>
@@ -291,6 +307,7 @@ function App() {
             </div>
           </section>
         </main>
+        )}
 
         <nav className="mobile-nav" aria-label="Navegação mobile">
           {navItems.slice(0, 4).map(({ label, icon: Icon }) => (
