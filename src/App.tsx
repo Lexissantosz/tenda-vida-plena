@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { AuthFlow } from './components/AuthFlow'
 import { MemberApprovalPanel } from './components/MemberApprovalPanel'
+import { CreateCallModal, type NewCall } from './components/CreateCallModal'
 import type { AuthScreen, SessionUser } from './types/auth'
 import {
   BookOpen,
@@ -41,7 +42,7 @@ type Point = {
   linkLabel: string
 }
 
-const calls: Call[] = [
+const initialCalls: Call[] = [
   { id: 1, name: 'Velas brancas', need: 'Ainda faltam 20 unidades', image: '/images/velas.svg' },
   { id: 2, name: 'Café', need: 'Ainda faltam 2 kg', image: '/images/cafe.svg' },
   { id: 3, name: 'Flores brancas', need: 'Ainda faltam 3 buquês', image: '/images/flores.svg' },
@@ -75,15 +76,29 @@ function App() {
   const [activeNav, setActiveNav] = useState('Início')
   const [searchOpen, setSearchOpen] = useState(false)
   const [pledged, setPledged] = useState<number[]>([])
+  const [calls, setCalls] = useState<Call[]>(initialCalls)
+  const [callModalOpen, setCallModalOpen] = useState(false)
   const [theme, setTheme] = useState<Theme>('claro')
   const [adminView, setAdminView] = useState<'home' | 'members'>('home')
 
   const pledgedSet = useMemo(() => new Set(pledged), [pledged])
+  const canManageHouse = sessionUser?.role === 'house_admin' || sessionUser?.role === 'system_admin'
 
   const togglePledge = (id: number) => {
     setPledged((current) =>
       current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
     )
+  }
+
+  const createCall = (newCall: NewCall) => {
+    setCalls((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        ...newCall,
+      },
+    ])
+    setCallModalOpen(false)
   }
 
   const cycleTheme = () => {
@@ -132,7 +147,7 @@ function App() {
             <HandHeart size={19} />
             <span>Doações</span>
           </button>
-          {sessionUser.role === 'house_admin' && (
+          {canManageHouse && (
             <button
               className={adminView === 'members' ? 'side-link active' : 'side-link'}
               onClick={() => setAdminView('members')}
@@ -154,6 +169,10 @@ function App() {
           </button>
         </div>
       </aside>
+
+      {callModalOpen && canManageHouse && (
+        <CreateCallModal onClose={() => setCallModalOpen(false)} onCreate={createCall} />
+      )}
 
       <div className="page-area">
         <header className="mobile-header">
@@ -178,7 +197,7 @@ function App() {
           </div>
         )}
 
-{adminView === 'members' && sessionUser.role === 'house_admin' ? (
+{adminView === 'members' && canManageHouse ? (
           <MemberApprovalPanel />
         ) : (
         <main className="page-content">
@@ -215,7 +234,13 @@ function App() {
                 <h3>O terreiro está precisando</h3>
                 <p>Se puder contribuir com algum item, marque aqui para ajudar na organização.</p>
               </div>
-              <button className="text-button">Ver tudo <ChevronRight size={16} /></button>
+{canManageHouse ? (
+                <button className="admin-action-button" onClick={() => setCallModalOpen(true)}>
+                  Criar chamado
+                </button>
+              ) : (
+                <button className="text-button">Ver tudo <ChevronRight size={16} /></button>
+              )}
             </div>
 
             <div className="call-grid">
