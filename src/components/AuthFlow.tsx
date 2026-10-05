@@ -10,6 +10,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import type { AuthScreen, SessionUser } from '../types/auth'
+import { RolePreview } from './RolePreview'
 
 type AuthFlowProps = {
   screen: Exclude<AuthScreen, 'app'>
@@ -292,6 +293,8 @@ export function AuthFlow({ screen, onScreenChange, onLogin }: AuthFlowProps) {
         <p className="auth-footnote">
           O acesso é destinado aos membros e responsáveis vinculados à Tenda Vida Plena.
         </p>
+
+        <RolePreview onSelect={onLogin} />
       </section>
     </main>
   )
