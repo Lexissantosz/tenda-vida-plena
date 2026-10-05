@@ -1288,3 +1288,142 @@ button { border: 0; }
     margin-top: 12px;
   }
 }
+
+
+/* House call creation */
+.admin-action-button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 11px;
+  background: var(--gold);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(28, 26, 22, .48);
+  backdrop-filter: blur(4px);
+}
+
+.call-modal {
+  width: min(520px, 100%);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(0,0,0,.2);
+  padding: 22px;
+}
+
+.modal-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+.modal-heading h2 {
+  margin: 0;
+  font: 700 1.8rem/1.1 'Playfair Display', serif;
+}
+
+.modal-heading p:not(.eyebrow) {
+  margin: 7px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+  font-size: .88rem;
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  color: var(--text);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.call-form {
+  display: grid;
+  gap: 16px;
+}
+
+.call-form label {
+  display: grid;
+  gap: 7px;
+}
+
+.call-form label > span {
+  font-size: .84rem;
+  font-weight: 700;
+}
+
+.call-form input,
+.call-form textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  outline: 0;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 12px 13px;
+  resize: vertical;
+}
+
+.call-form input:focus,
+.call-form textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 16%, transparent);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-primary,
+.modal-secondary {
+  min-height: 42px;
+  padding: 0 15px;
+  border-radius: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal-primary {
+  background: var(--gold);
+  color: #fff;
+}
+
+.modal-secondary {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+@media (max-width: 560px) {
+  .section-heading {
+    flex-direction: column;
+  }
+
+  .admin-action-button {
+    width: 100%;
+  }
+
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
