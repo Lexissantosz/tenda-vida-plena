@@ -1,15 +1,17 @@
 import { useMemo, useState } from 'react'
 import {
-  Bell,
   BookOpen,
   CalendarDays,
   ChevronRight,
   CircleUserRound,
+  FileText,
   HandHeart,
   Home,
   Menu,
-  Music2,
+  Moon,
   Search,
+  Settings2,
+  Sun,
   TentTree,
   UsersRound,
 } from 'lucide-react'
@@ -18,7 +20,7 @@ type Call = {
   id: number
   name: string
   need: string
-  icon: string
+  image: string
 }
 
 type Study = {
@@ -28,43 +30,46 @@ type Study = {
   progress: number
 }
 
-type Track = {
+type Point = {
   id: number
   title: string
   subtitle: string
-  duration: string
+  linkLabel: string
 }
 
 const calls: Call[] = [
-  { id: 1, name: 'Velas brancas', need: 'Precisamos de 20 unidades', icon: '🕯️' },
-  { id: 2, name: 'Café', need: 'Precisamos de 2 kg', icon: '☕' },
-  { id: 3, name: 'Flores brancas', need: 'Precisamos de 3 buquês', icon: '🌼' },
+  { id: 1, name: 'Velas brancas', need: 'Ainda faltam 20 unidades', image: '/images/velas.svg' },
+  { id: 2, name: 'Café', need: 'Ainda faltam 2 kg', image: '/images/cafe.svg' },
+  { id: 3, name: 'Flores brancas', need: 'Ainda faltam 3 buquês', image: '/images/flores.svg' },
 ]
 
 const studies: Study[] = [
-  { id: 1, title: 'Ervas na Umbanda', subtitle: 'Conheça o poder e os significados das principais ervas.', progress: 72 },
+  { id: 1, title: 'Ervas na Umbanda', subtitle: 'Você parou no capítulo 4', progress: 72 },
   { id: 2, title: 'Os Guias da Umbanda', subtitle: '12 aulas', progress: 35 },
   { id: 3, title: 'Firmezas e seus significados', subtitle: '8 aulas', progress: 18 },
 ]
 
-const tracks: Track[] = [
-  { id: 1, title: 'Ponto de Caboclo', subtitle: 'Caboclo das Matas', duration: '03:28' },
-  { id: 2, title: 'Ponto de Preto-Velho', subtitle: 'Vovô Cambinda', duration: '04:12' },
-  { id: 3, title: 'Ponto de Exu', subtitle: 'Laroyê, Mojubá', duration: '03:55' },
+const points: Point[] = [
+  { id: 1, title: 'Ponto de Caboclo', subtitle: 'Caboclo das Matas', linkLabel: 'Ver letra e referência' },
+  { id: 2, title: 'Ponto de Preto-Velho', subtitle: 'Vovô Cambinda', linkLabel: 'Ver letra e referência' },
+  { id: 3, title: 'Ponto de Exu', subtitle: 'Laroyê, Mojubá', linkLabel: 'Ver letra e referência' },
 ]
 
 const navItems = [
   { label: 'Início', icon: Home },
   { label: 'Estudos', icon: BookOpen },
   { label: 'Terreiro', icon: TentTree },
-  { label: 'Pontos', icon: Music2 },
   { label: 'Agenda', icon: CalendarDays },
+  { label: 'Pontos', icon: FileText },
 ]
+
+type Theme = 'claro' | 'terra' | 'noturno'
 
 function App() {
   const [activeNav, setActiveNav] = useState('Início')
   const [searchOpen, setSearchOpen] = useState(false)
   const [pledged, setPledged] = useState<number[]>([])
+  const [theme, setTheme] = useState<Theme>('claro')
 
   const pledgedSet = useMemo(() => new Set(pledged), [pledged])
 
@@ -74,177 +79,148 @@ function App() {
     )
   }
 
+  const cycleTheme = () => {
+    setTheme((current) => current === 'claro' ? 'terra' : current === 'terra' ? 'noturno' : 'claro')
+  }
+
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="brand">
-          <img src="/brand-mark.svg" alt="" className="brand-mark" />
+    <div className="app-shell" data-theme={theme}>
+      <aside className="sidebar">
+        <div className="sidebar-brand">
+          <img src="/brand-mark.svg" alt="Símbolo da Tenda Vida Plena" />
           <div>
-            <p className="eyebrow">Tenda de Umbanda</p>
-            <h1>Vida Plena</h1>
+            <span>Tenda de Umbanda</span>
+            <strong>Vida Plena</strong>
           </div>
         </div>
 
-        <nav className="desktop-nav" aria-label="Navegação principal">
+        <nav className="sidebar-nav" aria-label="Navegação principal">
           {navItems.map(({ label, icon: Icon }) => (
             <button
               key={label}
-              className={activeNav === label ? 'nav-button active' : 'nav-button'}
+              className={activeNav === label ? 'side-link active' : 'side-link'}
               onClick={() => setActiveNav(label)}
             >
-              <Icon size={18} />
+              <Icon size={19} />
               <span>{label}</span>
             </button>
           ))}
-          <button className="nav-button" onClick={() => setActiveNav('Doações')}>
-            <HandHeart size={18} />
+          <button className="side-link" onClick={() => setActiveNav('Doações')}>
+            <HandHeart size={19} />
             <span>Doações</span>
           </button>
         </nav>
 
-        <div className="header-actions">
-          <button className="icon-button" aria-label="Pesquisar" onClick={() => setSearchOpen((v) => !v)}>
-            <Search size={20} />
+        <div className="sidebar-bottom">
+          <button className="side-link" onClick={cycleTheme}>
+            {theme === 'noturno' ? <Moon size={19} /> : <Sun size={19} />}
+            <span>Tema: {theme}</span>
           </button>
-          <button className="icon-button notification" aria-label="Notificações">
-            <Bell size={20} />
-            <span className="dot" />
-          </button>
-          <button className="profile-button" aria-label="Abrir perfil">
-            <CircleUserRound size={28} />
+          <button className="side-link">
+            <Settings2 size={19} />
+            <span>Configurações</span>
           </button>
         </div>
-      </header>
+      </aside>
 
-      {searchOpen && (
-        <div className="search-panel">
-          <Search size={18} />
-          <input autoFocus placeholder="Buscar estudos, pontos, agenda..." />
-        </div>
-      )}
-
-      <main className="page-content">
-        <section className="welcome-row">
-          <div>
-            <p className="eyebrow">Bem-vindo(a)</p>
-            <h2>Fé, caridade e equilíbrio para caminhar em comunidade.</h2>
+      <div className="page-area">
+        <header className="mobile-header">
+          <div className="mobile-brand">
+            <img src="/brand-mark.svg" alt="" />
+            <strong>Vida Plena</strong>
           </div>
-          <p className="quote">“Tradição, amor e espiritualidade caminhando juntos por uma vida mais plena.”</p>
-        </section>
+          <div className="mobile-actions">
+            <button className="icon-button" aria-label="Pesquisar" onClick={() => setSearchOpen((v) => !v)}>
+              <Search size={20} />
+            </button>
+            <button className="icon-button" aria-label="Perfil">
+              <CircleUserRound size={24} />
+            </button>
+          </div>
+        </header>
 
-        <section className="hero-grid">
-          <article className="hero-card">
-            <div className="hero-overlay" />
+        {searchOpen && (
+          <div className="search-panel">
+            <Search size={18} />
+            <input autoFocus placeholder="Buscar estudos, pontos ou datas..." />
+          </div>
+        )}
+
+        <main className="page-content">
+          <section className="welcome-row">
+            <div>
+              <p className="eyebrow">Hoje na casa</p>
+              <h1>Bem-vindo(a) à Tenda Vida Plena.</h1>
+              <p className="intro-copy">Aqui você acompanha o que está acontecendo, retoma seus estudos e vê onde pode ajudar.</p>
+            </div>
+            <button className="profile-chip">
+              <CircleUserRound size={24} />
+              <span>Meu perfil</span>
+            </button>
+          </section>
+
+          <section className="hero-card">
+            <img src="/images/gira-caboclo.svg" alt="" className="hero-image" />
+            <div className="hero-shade" />
             <div className="hero-content">
-              <span className="pill">Próxima gira</span>
-              <h3>Gira de Caboclo</h3>
+              <span className="hero-kicker">Próxima gira</span>
+              <h2>Gira de Caboclo</h2>
               <div className="hero-meta">
-                <span><CalendarDays size={17} /> Sábado • 19h</span>
+                <span><CalendarDays size={17} /> Sábado, 19h</span>
                 <span><TentTree size={17} /> Tenda de Umbanda Vida Plena</span>
               </div>
-              <button className="primary-button">
-                Ver detalhes <ChevronRight size={18} />
-              </button>
+              <button className="primary-button">Ver detalhes <ChevronRight size={18} /></button>
             </div>
-          </article>
+          </section>
 
-          <aside className="quick-card">
-            <div className="section-heading compact">
+          <section className="panel">
+            <div className="section-heading">
               <div>
-                <p className="eyebrow">Acesso rápido</p>
-                <h3>Seu espaço na casa</h3>
+                <p className="eyebrow">Ajuda à casa</p>
+                <h3>O terreiro está precisando</h3>
+                <p>Se puder contribuir com algum item, marque aqui para ajudar na organização.</p>
               </div>
+              <button className="text-button">Ver tudo <ChevronRight size={16} /></button>
             </div>
-            <div className="quick-grid">
-              {[
-                ['Agenda', CalendarDays],
-                ['Conteúdos', BookOpen],
-                ['Doações', HandHeart],
-                ['Meus estudos', BookOpen],
-                ['Pontos', Music2],
-                ['Comunidade', UsersRound],
-              ].map(([label, Icon]) => {
-                const TypedIcon = Icon as typeof CalendarDays
+
+            <div className="call-grid">
+              {calls.map((item) => {
+                const isPledged = pledgedSet.has(item.id)
                 return (
-                  <button className="quick-action" key={label as string}>
-                    <TypedIcon size={22} />
-                    <span>{label as string}</span>
-                  </button>
-                )
-              })}
-            </div>
-          </aside>
-        </section>
-
-        <section className="content-grid">
-          <div className="main-column">
-            <section className="panel">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">Comunidade</p>
-                  <h3>Chamados do terreiro</h3>
-                  <p>Veja o que a casa está precisando e contribua com o que for possível.</p>
-                </div>
-                <button className="text-button">Ver todos <ChevronRight size={16} /></button>
-              </div>
-
-              <div className="call-grid">
-                {calls.map((item) => {
-                  const isPledged = pledgedSet.has(item.id)
-                  return (
-                    <article className="call-card" key={item.id}>
-                      <div className="call-visual" aria-hidden="true">{item.icon}</div>
+                  <article className="call-card" key={item.id}>
+                    <img src={item.image} alt="" className="call-image" />
+                    <div className="call-body">
                       <h4>{item.name}</h4>
                       <p>{item.need}</p>
                       <button
                         className={isPledged ? 'secondary-button selected' : 'secondary-button'}
                         onClick={() => togglePledge(item.id)}
                       >
-                        {isPledged ? 'Vou levar ✓' : 'Vou levar'}
+                        {isPledged ? 'Anotado, vou levar' : 'Posso levar'}
                       </button>
-                    </article>
-                  )
-                })}
-              </div>
-            </section>
+                    </div>
+                  </article>
+                )
+              })}
+            </div>
+          </section>
 
+          <section className="two-column">
             <section className="panel">
               <div className="section-heading">
                 <div>
-                  <p className="eyebrow">Música e tradição</p>
-                  <h3>Pontos recentes</h3>
+                  <p className="eyebrow">Seus estudos</p>
+                  <h3>Continue de onde parou</h3>
                 </div>
-                <button className="text-button">Ver todos <ChevronRight size={16} /></button>
-              </div>
-
-              <div className="track-list">
-                {tracks.map((track) => (
-                  <button className="track-row" key={track.id}>
-                    <span className="play-button">▶</span>
-                    <span className="track-copy">
-                      <strong>{track.title}</strong>
-                      <small>{track.subtitle}</small>
-                    </span>
-                    <span className="duration">{track.duration}</span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          </div>
-
-          <aside className="side-column">
-            <section className="panel">
-              <div className="section-heading">
-                <div>
-                  <p className="eyebrow">Estudos</p>
-                  <h3>Continue estudando</h3>
-                </div>
+                <button className="text-button">Ver estudos <ChevronRight size={16} /></button>
               </div>
 
               <div className="study-list">
-                {studies.map((study, index) => (
-                  <article className={index === 0 ? 'study-card featured' : 'study-card'} key={study.id}>
-                    <div className="study-icon">🌿</div>
+                {studies.map((study) => (
+                  <article className="study-card" key={study.id}>
+                    <div className="study-thumb">
+                      <img src="/images/folhas-estudo.svg" alt="" />
+                    </div>
                     <div className="study-copy">
                       <strong>{study.title}</strong>
                       <small>{study.subtitle}</small>
@@ -258,30 +234,62 @@ function App() {
               </div>
             </section>
 
-            <section className="inspiration-card">
-              <span>Espiritualidade que inspira</span>
-              <strong>vidas mais plenas.</strong>
-            </section>
-          </aside>
-        </section>
-      </main>
+            <section className="panel">
+              <div className="section-heading">
+                <div>
+                  <p className="eyebrow">Pontos</p>
+                  <h3>Letras e referências</h3>
+                </div>
+                <button className="text-button">Ver todos <ChevronRight size={16} /></button>
+              </div>
 
-      <nav className="mobile-nav" aria-label="Navegação mobile">
-        {navItems.slice(0, 4).map(({ label, icon: Icon }) => (
-          <button
-            key={label}
-            className={activeNav === label ? 'mobile-nav-button active' : 'mobile-nav-button'}
-            onClick={() => setActiveNav(label)}
-          >
-            <Icon size={21} />
-            <span>{label}</span>
+              <div className="point-list">
+                {points.map((point) => (
+                  <article className="point-row" key={point.id}>
+                    <div>
+                      <strong>{point.title}</strong>
+                      <small>{point.subtitle}</small>
+                    </div>
+                    <button className="point-link">{point.linkLabel}</button>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </section>
+
+          <section className="panel quick-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Acesso rápido</p>
+                <h3>O que você quer fazer agora?</h3>
+              </div>
+            </div>
+            <div className="quick-grid">
+              <button><CalendarDays size={22} /><span>Ver agenda</span></button>
+              <button><BookOpen size={22} /><span>Abrir estudos</span></button>
+              <button><UsersRound size={22} /><span>Comunidade</span></button>
+              <button><HandHeart size={22} /><span>Chamados</span></button>
+            </div>
+          </section>
+        </main>
+
+        <nav className="mobile-nav" aria-label="Navegação mobile">
+          {navItems.slice(0, 4).map(({ label, icon: Icon }) => (
+            <button
+              key={label}
+              className={activeNav === label ? 'mobile-nav-button active' : 'mobile-nav-button'}
+              onClick={() => setActiveNav(label)}
+            >
+              <Icon size={21} />
+              <span>{label}</span>
+            </button>
+          ))}
+          <button className="mobile-nav-button" onClick={() => setActiveNav('Mais')}>
+            <Menu size={21} />
+            <span>Mais</span>
           </button>
-        ))}
-        <button className="mobile-nav-button" onClick={() => setActiveNav('Mais')}>
-          <Menu size={21} />
-          <span>Mais</span>
-        </button>
-      </nav>
+        </nav>
+      </div>
     </div>
   )
 }
