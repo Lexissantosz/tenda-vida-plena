@@ -5,6 +5,8 @@ export type CallItem = {
   remaining: number
   unit: string
   image: string
+  deadline?: string
+  closed?: boolean
 }
 
 export type ContributionStatus = 'pending' | 'delivered' | 'not_delivered'
@@ -25,6 +27,8 @@ export type StudyItem = {
   progress: number
   summary: string
   lessons: string[]
+  relatedPointIds?: number[]
+  relatedMaterials?: string[]
 }
 
 export type PointItem = {
@@ -34,4 +38,23 @@ export type PointItem = {
   source: string
   lyrics: string
   referenceUrl: string
+}
+
+export type HouseEvent = {
+  id: number
+  date: string
+  title: string
+  time: string
+  category: string
+  note: string
+}
+
+export type MaterialMovement = {
+  id: number
+  item: string
+  quantity: number
+  unit: string
+  type: 'entrada' | 'saida'
+  note: string
+  createdAt: string
 }
