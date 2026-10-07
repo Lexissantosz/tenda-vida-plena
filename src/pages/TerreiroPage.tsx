@@ -11,6 +11,7 @@ type TerreiroPageProps = {
   onContribute: (call: CallItem) => void
   onContributionDecision: (id: number, delivered: boolean) => void
   onToggleCallClosed: (id: number) => void
+  onEditCall: (call: CallItem) => void
   onOpenCommunity: () => void
   onOpenMembers: () => void
   onOpenMaterials: () => void
@@ -25,6 +26,7 @@ export function TerreiroPage({
   onContribute,
   onContributionDecision,
   onToggleCallClosed,
+  onEditCall,
   onOpenCommunity,
   onOpenMembers,
   onOpenMaterials,
@@ -81,9 +83,12 @@ export function TerreiroPage({
                   )}
 
                   {canManage && (
-                    <button className="call-manage-button" onClick={() => onToggleCallClosed(call.id)}>
-                      {call.closed ? 'Reabrir chamado' : 'Encerrar chamado'}
-                    </button>
+                    <div className="call-admin-actions">
+                      <button className="call-manage-button" onClick={() => onEditCall(call)}>Editar</button>
+                      <button className="call-manage-button" onClick={() => onToggleCallClosed(call.id)}>
+                        {call.closed ? 'Reabrir chamado' : 'Encerrar chamado'}
+                      </button>
+                    </div>
                   )}
                 </div>
               </article>
