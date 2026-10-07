@@ -15,6 +15,7 @@ export function StudiesPage({ canManage = false }: { canManage?: boolean }) {
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null)
   const [selectedMaterial, setSelectedMaterial] = useState<string | null>(null)
   const [showCreate, setShowCreate] = useState(false)
+  const [completedLessons, setCompletedLessons] = useState<Record<number, string[]>>({})
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -59,7 +60,21 @@ export function StudiesPage({ canManage = false }: { canManage?: boolean }) {
     event.currentTarget.reset()
   }
 
+  const markLessonComplete = () => {
+    if (!selectedStudy || !selectedLesson) return
+    setCompletedLessons((current) => {
+      const existing = current[selectedStudy.id] ?? []
+      if (existing.includes(selectedLesson)) return current
+      const next = [...existing, selectedLesson]
+      const progress = Math.round((next.length / selectedStudy.lessons.length) * 100)
+      setStudies((items) => items.map((item) => item.id === selectedStudy.id ? { ...item, progress } : item))
+      setSelectedStudy((current) => current ? { ...current, progress } : current)
+      return { ...current, [selectedStudy.id]: next }
+    })
+  }
+
   if (selectedStudy && selectedLesson) {
+    const isComplete = completedLessons[selectedStudy.id]?.includes(selectedLesson)
     return (
       <main className="page-content section-page">
         <button className="back-button" onClick={() => setSelectedLesson(null)}><ArrowLeft size={17} /> Voltar às aulas</button>
@@ -71,6 +86,9 @@ export function StudiesPage({ canManage = false }: { canManage?: boolean }) {
             <BookOpen size={28} />
             <strong>Espaço da aula</strong>
             <span>Aqui podem entrar texto, imagens, PDFs relacionados, anotações e progresso.</span>
+            <button className={isComplete ? 'lesson-complete-button done' : 'lesson-complete-button'} onClick={markLessonComplete}>
+              {isComplete ? 'Aula concluída' : 'Marcar como concluída'}
+            </button>
           </div>
         </section>
       </main>
@@ -98,7 +116,7 @@ export function StudiesPage({ canManage = false }: { canManage?: boolean }) {
               <button className="lesson-row" key={lesson} onClick={() => setSelectedLesson(lesson)}>
                 <span>{index + 1}</span>
                 <strong>{lesson}</strong>
-                <small>{index < Math.ceil(selectedStudy.lessons.length * selectedStudy.progress / 100) ? 'Reabrir aula' : 'Abrir aula'}</small>
+                <small>{completedLessons[selectedStudy.id]?.includes(lesson) ? 'Concluída' : index < Math.ceil(selectedStudy.lessons.length * selectedStudy.progress / 100) ? 'Reabrir aula' : 'Abrir aula'}</small>
               </button>
             ))}
           </div>
