@@ -1,22 +1,26 @@
 import { FormEvent, useState } from 'react'
 import { X } from 'lucide-react'
+import type { CallItem } from '../types/domain'
 
 export type NewCall = {
   name: string
   total: number
   unit: string
   image: string
+  deadline?: string
 }
 
 type CreateCallModalProps = {
   onClose: () => void
   onCreate: (call: NewCall) => void
+  initialCall?: CallItem | null
 }
 
-export function CreateCallModal({ onClose, onCreate }: CreateCallModalProps) {
-  const [name, setName] = useState('')
-  const [total, setTotal] = useState(1)
-  const [unit, setUnit] = useState('unidades')
+export function CreateCallModal({ onClose, onCreate, initialCall }: CreateCallModalProps) {
+  const [name, setName] = useState(initialCall?.name ?? '')
+  const [total, setTotal] = useState(initialCall?.total ?? 1)
+  const [unit, setUnit] = useState(initialCall?.unit ?? 'unidades')
+  const [deadline, setDeadline] = useState(initialCall?.deadline ?? '')
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -26,7 +30,8 @@ export function CreateCallModal({ onClose, onCreate }: CreateCallModalProps) {
       name: name.trim(),
       total,
       unit: unit.trim() || 'unidades',
-      image: '/images/pedido.svg',
+      image: initialCall?.image ?? '/images/pedido.svg',
+      deadline: deadline || undefined,
     })
   }
 
@@ -36,8 +41,8 @@ export function CreateCallModal({ onClose, onCreate }: CreateCallModalProps) {
         <div className="modal-heading">
           <div>
             <p className="eyebrow">Administração da casa</p>
-            <h2>Criar chamado</h2>
-            <p>Defina quanto a casa precisa. Os membros poderão assumir quantidades parciais.</p>
+            <h2>{initialCall ? 'Editar chamado' : 'Criar chamado'}</h2>
+            <p>{initialCall ? 'Atualize as informações do chamado.' : 'Defina quanto a casa precisa. Os membros poderão assumir quantidades parciais.'}</p>
           </div>
           <button className="modal-close" type="button" onClick={onClose} aria-label="Fechar"><X size={20} /></button>
         </div>
@@ -59,9 +64,14 @@ export function CreateCallModal({ onClose, onCreate }: CreateCallModalProps) {
             </label>
           </div>
 
+          <label>
+            <span>Prazo <small>opcional</small></span>
+            <input type="date" value={deadline} onChange={(event) => setDeadline(event.target.value)} />
+          </label>
+
           <div className="modal-actions">
             <button className="modal-secondary" type="button" onClick={onClose}>Cancelar</button>
-            <button className="modal-primary" type="submit">Publicar chamado</button>
+            <button className="modal-primary" type="submit">{initialCall ? 'Salvar alterações' : 'Publicar chamado'}</button>
           </div>
         </form>
       </section>
