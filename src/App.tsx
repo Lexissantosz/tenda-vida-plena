@@ -11,10 +11,15 @@ import { ProfilePage } from './pages/ProfilePage'
 import { DonationsPage } from './pages/DonationsPage'
 import { SettingsPage } from './pages/SettingsPage'
 import { CommunityPage } from './pages/CommunityPage'
-import { initialCalls, prototypePoints, prototypeStudies } from './data/prototypeData'
+import { MorePage } from './pages/MorePage'
+import { NotificationsPage } from './pages/NotificationsPage'
+import { MaterialsPage } from './pages/MaterialsPage'
+import { AdminDashboardPage } from './pages/AdminDashboardPage'
+import { initialCalls, prototypeEvents, prototypePoints, prototypeStudies } from './data/prototypeData'
 import type { AuthScreen, SessionUser } from './types/auth'
-import type { CallItem, Contribution } from './types/domain'
+import type { CallItem, Contribution, HouseEvent } from './types/domain'
 import {
+  Bell,
   BookOpen,
   CalendarDays,
   ChevronRight,
@@ -42,6 +47,10 @@ type View =
   | 'Perfil'
   | 'Configurações'
   | 'Membros'
+  | 'Mais'
+  | 'Notificações'
+  | 'Administração'
+  | 'Materiais'
 
 const navItems = [
   { label: 'Início' as const, icon: Home },
@@ -58,6 +67,7 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [theme, setTheme] = useState<Theme>('claro')
   const [calls, setCalls] = useState<CallItem[]>(initialCalls)
+  const [events, setEvents] = useState<HouseEvent[]>(prototypeEvents)
   const [contributions, setContributions] = useState<Contribution[]>([])
   const [callModalOpen, setCallModalOpen] = useState(false)
   const [contributionCall, setContributionCall] = useState<CallItem | null>(null)
@@ -75,6 +85,14 @@ function App() {
     setActiveView(view)
     setSearchOpen(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const addEvent = (event: HouseEvent) => {
+    setEvents((current) => [...current, event])
+  }
+
+  const toggleCallClosed = (id: number) => {
+    setCalls((current) => current.map((call) => call.id === id ? { ...call, closed: !call.closed } : call))
   }
 
   const createCall = (newCall: NewCall) => {
@@ -150,10 +168,16 @@ function App() {
   const renderContent = () => {
     if (activeView === 'Membros' && canManageHouse) return <MemberApprovalPanel />
 
-    if (activeView === 'Estudos') return <StudiesPage />
-    if (activeView === 'Agenda') return <CalendarPage />
-    if (activeView === 'Pontos') return <PointsPage />
+    if (activeView === 'Estudos') return <StudiesPage canManage={canManageHouse} />
+    if (activeView === 'Agenda') return <CalendarPage events={events} canManage={canManageHouse} onAddEvent={addEvent} />
+    if (activeView === 'Pontos') return <PointsPage canManage={canManageHouse} />
     if (activeView === 'Doações') return <DonationsPage onOpenCalls={() => navigate('Terreiro')} />
+    if (activeView === 'Notificações') return <NotificationsPage calls={calls} events={events} />
+    if (activeView === 'Materiais' && canManageHouse) return <MaterialsPage />
+    if (activeView === 'Administração' && canManageHouse) {
+      return <AdminDashboardPage calls={calls} contributions={contributions} events={events} onNavigate={(view) => navigate(view as View)} />
+    }
+    if (activeView === 'Mais') return <MorePage role={sessionUser.role} onNavigate={(view) => navigate(view as View)} />
     if (activeView === 'Comunidade') return <CommunityPage onOpenProfile={() => navigate('Perfil')} />
     if (activeView === 'Perfil') return (
       <ProfilePage
@@ -173,11 +197,14 @@ function App() {
           role={sessionUser.role}
           calls={calls}
           contributions={contributions}
+          events={events}
           onCreateCall={() => setCallModalOpen(true)}
           onContribute={setContributionCall}
           onContributionDecision={decideContribution}
+          onToggleCallClosed={toggleCallClosed}
           onOpenCommunity={() => navigate('Comunidade')}
           onOpenMembers={() => navigate('Membros')}
+          onOpenMaterials={() => navigate('Materiais')}
         />
       )
     }
@@ -220,7 +247,7 @@ function App() {
               <p className="eyebrow">Ajuda à casa</p>
               <h3>O terreiro está precisando</h3>
               <p>Veja os chamados abertos e escolha quanto consegue levar. A quantidade só baixa depois que um responsável confirma a entrega.</p>
-              <span className="open-calls-count">{calls.filter((call) => call.remaining > 0).length} chamados abertos</span>
+              <span className="open-calls-count">{calls.filter((call) => !call.closed && call.remaining > 0).length} chamados abertos</span>
             </div>
             {canManageHouse ? (
               <button className="admin-action-button" onClick={() => setCallModalOpen(true)}>
@@ -373,10 +400,16 @@ function App() {
           </button>
 
           {canManageHouse && (
-            <button className={activeView === 'Membros' ? 'side-link active' : 'side-link'} onClick={() => navigate('Membros')}>
-              <ShieldCheck size={19} />
-              <span>Membros e acessos</span>
-            </button>
+            <>
+              <button className={activeView === 'Administração' ? 'side-link active' : 'side-link'} onClick={() => navigate('Administração')}>
+                <ShieldCheck size={19} />
+                <span>Administração</span>
+              </button>
+              <button className={activeView === 'Membros' ? 'side-link active' : 'side-link'} onClick={() => navigate('Membros')}>
+                <UsersRound size={19} />
+                <span>Membros e acessos</span>
+              </button>
+            </>
           )}
         </nav>
 
@@ -414,6 +447,9 @@ function App() {
             <button className="icon-button" aria-label="Pesquisar" onClick={() => setSearchOpen((current) => !current)}>
               <Search size={20} />
             </button>
+            <button className="icon-button" aria-label="Notificações" onClick={() => navigate('Notificações')}>
+              <Bell size={21} />
+            </button>
             <button className="icon-button" aria-label="Perfil" onClick={() => navigate('Perfil')}>
               <CircleUserRound size={24} />
             </button>
@@ -430,19 +466,20 @@ function App() {
         {renderContent()}
 
         <nav className="mobile-nav" aria-label="Navegação mobile">
-          {navItems.slice(0, 4).map(({ label, icon: Icon }) => (
-            <button
-              key={label}
-              className={activeView === label ? 'mobile-nav-button active' : 'mobile-nav-button'}
-              onClick={() => navigate(label)}
-            >
-              <Icon size={21} />
-              <span>{label}</span>
-            </button>
-          ))}
-          <button className="mobile-nav-button" onClick={() => navigate('Configurações')}>
-            <Menu size={21} />
-            <span>Mais</span>
+          <button className={activeView === 'Início' ? 'mobile-nav-button active' : 'mobile-nav-button'} onClick={() => navigate('Início')}>
+            <Home size={21} /><span>Início</span>
+          </button>
+          <button className={activeView === 'Estudos' ? 'mobile-nav-button active' : 'mobile-nav-button'} onClick={() => navigate('Estudos')}>
+            <BookOpen size={21} /><span>Estudos</span>
+          </button>
+          <button className={activeView === 'Terreiro' ? 'mobile-nav-button active' : 'mobile-nav-button'} onClick={() => navigate('Terreiro')}>
+            <TentTree size={21} /><span>Terreiro</span>
+          </button>
+          <button className={activeView === 'Pontos' ? 'mobile-nav-button active' : 'mobile-nav-button'} onClick={() => navigate('Pontos')}>
+            <FileText size={21} /><span>Pontos</span>
+          </button>
+          <button className={activeView === 'Mais' ? 'mobile-nav-button active' : 'mobile-nav-button'} onClick={() => navigate('Mais')}>
+            <Menu size={21} /><span>Mais</span>
           </button>
         </nav>
       </div>
