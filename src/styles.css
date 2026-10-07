@@ -3029,3 +3029,36 @@ button { border: 0; }
     align-items: flex-start;
   }
 }
+
+
+.call-admin-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.call-admin-actions .call-manage-button {
+  margin-top: 0;
+}
+
+.lesson-complete-button {
+  width: max-content;
+  margin-top: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: var(--gold);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lesson-complete-button.done {
+  background: var(--olive);
+}
+
+@media (max-width: 430px) {
+  .call-admin-actions {
+    grid-template-columns: 1fr;
+  }
+}
