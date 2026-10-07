@@ -70,6 +70,7 @@ function App() {
   const [events, setEvents] = useState<HouseEvent[]>(prototypeEvents)
   const [contributions, setContributions] = useState<Contribution[]>([])
   const [callModalOpen, setCallModalOpen] = useState(false)
+  const [editingCall, setEditingCall] = useState<CallItem | null>(null)
   const [contributionCall, setContributionCall] = useState<CallItem | null>(null)
 
   const canManageHouse =
@@ -95,18 +96,38 @@ function App() {
     setCalls((current) => current.map((call) => call.id === id ? { ...call, closed: !call.closed } : call))
   }
 
-  const createCall = (newCall: NewCall) => {
-    setCalls((current) => [
-      ...current,
-      {
-        id: Date.now(),
-        name: newCall.name,
-        total: newCall.total,
-        remaining: newCall.total,
-        unit: newCall.unit,
-        image: newCall.image,
-      },
-    ])
+  const saveCall = (newCall: NewCall) => {
+    if (editingCall) {
+      setCalls((current) =>
+        current.map((call) => {
+          if (call.id !== editingCall.id) return call
+          const delivered = Math.max(0, call.total - call.remaining)
+          return {
+            ...call,
+            name: newCall.name,
+            total: newCall.total,
+            remaining: Math.max(0, newCall.total - delivered),
+            unit: newCall.unit,
+            image: newCall.image,
+            deadline: newCall.deadline,
+          }
+        }),
+      )
+    } else {
+      setCalls((current) => [
+        ...current,
+        {
+          id: Date.now(),
+          name: newCall.name,
+          total: newCall.total,
+          remaining: newCall.total,
+          unit: newCall.unit,
+          image: newCall.image,
+          deadline: newCall.deadline,
+        },
+      ])
+    }
+    setEditingCall(null)
     setCallModalOpen(false)
   }
 
@@ -164,6 +185,7 @@ function App() {
 
   const homeStudies = prototypeStudies.slice(0, 3)
   const homePoints = prototypePoints.slice(0, 3)
+  const nextEvent = [...events].sort((a, b) => a.date.localeCompare(b.date))[0]
 
   const renderContent = () => {
     if (activeView === 'Membros' && canManageHouse) return <MemberApprovalPanel />
@@ -198,10 +220,17 @@ function App() {
           calls={calls}
           contributions={contributions}
           events={events}
-          onCreateCall={() => setCallModalOpen(true)}
+          onCreateCall={() => {
+            setEditingCall(null)
+            setCallModalOpen(true)
+          }}
           onContribute={setContributionCall}
           onContributionDecision={decideContribution}
           onToggleCallClosed={toggleCallClosed}
+          onEditCall={(call) => {
+            setEditingCall(call)
+            setCallModalOpen(true)
+          }}
           onOpenCommunity={() => navigate('Comunidade')}
           onOpenMembers={() => navigate('Membros')}
           onOpenMaterials={() => navigate('Materiais')}
@@ -229,10 +258,10 @@ function App() {
           <img src="/images/gira-caboclo.svg" alt="" className="hero-image" />
           <div className="hero-shade" />
           <div className="hero-content">
-            <span className="hero-kicker">Próxima gira</span>
-            <h2>Gira de Caboclo</h2>
+            <span className="hero-kicker">Próxima atividade</span>
+            <h2>{nextEvent?.title ?? 'Agenda da casa'}</h2>
             <div className="hero-meta">
-              <span><CalendarDays size={17} /> Sábado, 19h</span>
+              <span><CalendarDays size={17} /> {nextEvent ? new Date(`${nextEvent.date}T12:00:00`).toLocaleDateString('pt-BR') : 'A confirmar'}{nextEvent ? ` • ${nextEvent.time}` : ''}</span>
               <span><TentTree size={17} /> Tenda de Umbanda Vida Plena</span>
             </div>
             <button className="primary-button" onClick={() => navigate('Agenda')}>
@@ -250,7 +279,10 @@ function App() {
               <span className="open-calls-count">{calls.filter((call) => !call.closed && call.remaining > 0).length} chamados abertos</span>
             </div>
             {canManageHouse ? (
-              <button className="admin-action-button" onClick={() => setCallModalOpen(true)}>
+              <button className="admin-action-button" onClick={() => {
+                setEditingCall(null)
+                setCallModalOpen(true)
+              }}>
                 Criar chamado
               </button>
             ) : (
@@ -426,7 +458,14 @@ function App() {
       </aside>
 
       {callModalOpen && canManageHouse && (
-        <CreateCallModal onClose={() => setCallModalOpen(false)} onCreate={createCall} />
+        <CreateCallModal
+          onClose={() => {
+            setCallModalOpen(false)
+            setEditingCall(null)
+          }}
+          onCreate={saveCall}
+          initialCall={editingCall}
+        />
       )}
 
       {contributionCall && !canManageHouse && (
