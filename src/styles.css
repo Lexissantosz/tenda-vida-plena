@@ -2398,3 +2398,256 @@ button { border: 0; }
   font-size: .75rem;
   font-weight: 700;
 }
+
+
+/* Mobile-first chamados */
+.calls-highlight-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.calls-heading {
+  align-items: flex-start;
+}
+
+.open-calls-count {
+  display: inline-flex;
+  margin-top: 10px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gold) 14%, var(--surface-soft));
+  color: var(--gold);
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.calls-footer-button {
+  width: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  min-height: 46px;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.calls-primary-panel {
+  scroll-margin-top: 90px;
+}
+
+.management-call-content {
+  min-width: 0;
+}
+
+.management-call-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.management-call-title h3 {
+  min-width: 0;
+}
+
+.call-complete-badge {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--olive) 18%, var(--surface));
+  color: var(--olive);
+  font-size: .68rem;
+  font-weight: 700;
+}
+
+.management-call-card.complete {
+  opacity: .74;
+}
+
+.management-call-card small {
+  display: block;
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: .72rem;
+}
+
+.take-part-button {
+  width: 100%;
+  min-height: 42px;
+}
+
+.terreiro-secondary-grid {
+  margin-top: 16px;
+}
+
+@media (max-width: 680px) {
+  .page-content {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .welcome-row {
+    gap: 14px;
+  }
+
+  .welcome-row h1 {
+    font-size: clamp(1.8rem, 9vw, 2.5rem);
+  }
+
+  .hero-card {
+    min-height: 330px;
+    border-radius: 18px;
+  }
+
+  .hero-content {
+    padding: 20px;
+  }
+
+  .hero-content h2 {
+    font-size: 2rem;
+  }
+
+  .hero-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .call-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    margin-left: -14px;
+    margin-right: -14px;
+    padding: 0 14px 8px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+  }
+
+  .call-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .call-card {
+    flex: 0 0 min(78vw, 290px);
+    scroll-snap-align: start;
+  }
+
+  .call-image {
+    height: 128px;
+  }
+
+  .call-body {
+    padding: 13px;
+  }
+
+  .call-body h4 {
+    font-size: 1rem;
+  }
+
+  .call-body .secondary-button {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .calls-footer-button {
+    display: inline-flex;
+  }
+
+  .section-page {
+    padding-top: 26px;
+  }
+
+  .section-page-heading h1 {
+    font-size: clamp(1.9rem, 9vw, 2.55rem);
+  }
+
+  .terreiro-page-heading {
+    margin-bottom: 16px;
+  }
+
+  .calls-primary-panel {
+    padding: 14px;
+  }
+
+  .call-management-grid {
+    gap: 10px;
+  }
+
+  .management-call-card {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px;
+    border-radius: 14px;
+  }
+
+  .management-call-card img {
+    width: 76px;
+    min-height: 96px;
+    border-radius: 10px;
+  }
+
+  .management-call-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .management-call-card h3 {
+    margin: 0;
+    font-size: 1.05rem;
+  }
+
+  .management-call-card p {
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+
+  .take-part-button {
+    font-size: .82rem;
+  }
+
+  .delivery-row > div:last-child button {
+    min-height: 42px;
+  }
+
+  .terreiro-secondary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .terreiro-secondary-grid .terreiro-feature {
+    min-height: 190px;
+  }
+
+  .quick-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-grid button {
+    min-height: 84px;
+  }
+
+  .mobile-nav {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-width: 390px) {
+  .management-call-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+  }
+
+  .management-call-card img {
+    width: 64px;
+    min-height: 88px;
+  }
+
+  .call-card {
+    flex-basis: 84vw;
+  }
+}
