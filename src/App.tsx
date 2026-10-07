@@ -214,12 +214,13 @@ function App() {
           </div>
         </section>
 
-        <section className="panel">
-          <div className="section-heading">
+        <section className="panel calls-highlight-panel">
+          <div className="section-heading calls-heading">
             <div>
               <p className="eyebrow">Ajuda à casa</p>
               <h3>O terreiro está precisando</h3>
-              <p>Você pode assumir só uma parte. A quantidade só baixa depois que um responsável confirma a entrega.</p>
+              <p>Veja os chamados abertos e escolha quanto consegue levar. A quantidade só baixa depois que um responsável confirma a entrega.</p>
+              <span className="open-calls-count">{calls.filter((call) => call.remaining > 0).length} chamados abertos</span>
             </div>
             {canManageHouse ? (
               <button className="admin-action-button" onClick={() => setCallModalOpen(true)}>
@@ -260,6 +261,10 @@ function App() {
               </article>
             ))}
           </div>
+
+          <button className="calls-footer-button" onClick={() => navigate('Terreiro')}>
+            Ver todos os chamados <ChevronRight size={17} />
+          </button>
         </section>
 
         <section className="two-column">
