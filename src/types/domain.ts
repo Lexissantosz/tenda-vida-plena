@@ -36,7 +36,7 @@ export type PointItem = {
   title: string
   group: string
   source: string
-  referenceUrl: string
+  content?: string
 }
 
 export type HouseEvent = {
