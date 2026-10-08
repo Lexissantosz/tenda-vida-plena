@@ -36,7 +36,6 @@ export type PointItem = {
   title: string
   group: string
   source: string
-  lyrics: string
   referenceUrl: string
 }
 
@@ -47,6 +46,8 @@ export type HouseEvent = {
   time: string
   category: string
   note: string
+  location?: string
+  image?: string
 }
 
 export type MaterialMovement = {
