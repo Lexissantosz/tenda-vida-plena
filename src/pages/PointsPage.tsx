@@ -1,9 +1,39 @@
 import { FormEvent, useMemo, useState } from 'react'
-import { ArrowLeft, BookOpen, FileText, Pencil, Plus, Search, X } from 'lucide-react'
+import {
+  ArrowLeft,
+  BookOpen,
+  Check,
+  FileText,
+  MessageCircle,
+  MessagesSquare,
+  Pencil,
+  Plus,
+  Search,
+  Send,
+  X,
+} from 'lucide-react'
 import { prototypePoints } from '../data/prototypeData'
-import type { PointItem } from '../types/domain'
+import type { PointComment, PointItem, PointQuestion } from '../types/domain'
 
-export function PointsPage({ canManage = false }: { canManage?: boolean }) {
+type PointsPageProps = {
+  canManage?: boolean
+  currentUserName: string
+  comments: PointComment[]
+  questions: PointQuestion[]
+  onAddComment: (pointId: number, message: string) => void
+  onAskQuestion: (pointId: number, message: string) => void
+  onResolveQuestion: (questionId: number) => void
+}
+
+export function PointsPage({
+  canManage = false,
+  currentUserName,
+  comments,
+  questions,
+  onAddComment,
+  onAskQuestion,
+  onResolveQuestion,
+}: PointsPageProps) {
   const [points, setPoints] = useState(prototypePoints)
   const [group, setGroup] = useState('Todos')
   const [query, setQuery] = useState('')
@@ -13,6 +43,10 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
   const [editTitle, setEditTitle] = useState('')
   const [editGroup, setEditGroup] = useState('')
   const [editContent, setEditContent] = useState('')
+  const [commentText, setCommentText] = useState('')
+  const [questionText, setQuestionText] = useState('')
+  const [commentSent, setCommentSent] = useState(false)
+  const [questionSent, setQuestionSent] = useState(false)
 
   const groups = useMemo(
     () => ['Todos', ...Array.from(new Set(points.map((point) => point.group)))],
@@ -28,6 +62,8 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
       return matchesGroup && matchesQuery
     })
   }, [group, query, points])
+
+  const openQuestions = questions.filter((question) => question.status === 'open')
 
   const createPoint = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -75,12 +111,35 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
     setEditing(false)
   }
 
+  const submitComment = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!selected || !commentText.trim()) return
+    onAddComment(selected.id, commentText)
+    setCommentText('')
+    setCommentSent(true)
+    window.setTimeout(() => setCommentSent(false), 2200)
+  }
+
+  const submitQuestion = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!selected || !questionText.trim()) return
+    onAskQuestion(selected.id, questionText)
+    setQuestionText('')
+    setQuestionSent(true)
+    window.setTimeout(() => setQuestionSent(false), 2600)
+  }
+
   if (selected) {
+    const pointComments = comments.filter((comment) => comment.pointId === selected.id)
+    const pointQuestions = questions.filter((question) => question.pointId === selected.id)
+
     return (
       <main className="page-content section-page">
         <button className="back-button" onClick={() => {
           setSelected(null)
           setEditing(false)
+          setCommentText('')
+          setQuestionText('')
         }}>
           <ArrowLeft size={17} /> Voltar aos pontos
         </button>
@@ -119,7 +178,7 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
                   value={editContent}
                   onChange={(event) => setEditContent(event.target.value)}
                   rows={14}
-                  placeholder="Cole aqui o conteúdo autorizado da Tenda..."
+                  placeholder="Cole aqui o conteúdo do ponto..."
                 />
               </label>
 
@@ -142,11 +201,111 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
             <div className="internal-point-content pending">
               <FileText size={28} />
               <div>
-                <h3>Conteúdo ainda não publicado</h3>
-                <p>Este ponto já está catalogado no sistema. Um administrador pode usar “Editar conteúdo” para publicar a leitura diretamente aqui.</p>
+                <h3>Conteúdo em cadastro</h3>
+                <p>Este ponto já está catalogado. O texto será exibido aqui quando for inserido no sistema.</p>
               </div>
             </div>
           )}
+        </section>
+
+        <section className="point-social-grid">
+          <section className="panel point-comments-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Comunidade</p>
+                <h3>Comentários</h3>
+                <p>Converse com outras pessoas da casa sobre este ponto.</p>
+              </div>
+              <span className="point-social-count">{pointComments.length}</span>
+            </div>
+
+            <form className="point-message-form" onSubmit={submitComment}>
+              <textarea
+                value={commentText}
+                onChange={(event) => setCommentText(event.target.value)}
+                placeholder="Escreva um comentário..."
+                rows={3}
+              />
+              <button type="submit"><MessageCircle size={16} /> Comentar</button>
+            </form>
+
+            {commentSent && <p className="point-form-success">Comentário publicado.</p>}
+
+            <div className="point-comment-list">
+              {pointComments.map((comment) => (
+                <article className="point-comment-card" key={comment.id}>
+                  <div className="point-comment-avatar">{comment.authorName.slice(0, 1).toUpperCase()}</div>
+                  <div>
+                    <div className="point-comment-meta">
+                      <strong>{comment.authorName}</strong>
+                      <small>{comment.createdAt}</small>
+                    </div>
+                    <p>{comment.message}</p>
+                  </div>
+                </article>
+              ))}
+
+              {!pointComments.length && (
+                <div className="point-social-empty">
+                  <MessagesSquare size={21} />
+                  <span>Ainda não há comentários. Você pode ser a primeira pessoa.</span>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="panel point-question-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Dúvida ou correção</p>
+                <h3>Falar com responsáveis</h3>
+                <p>Envie uma mensagem privada para Pai/Mãe de Santo e administradores sobre este ponto.</p>
+              </div>
+            </div>
+
+            <form className="point-message-form" onSubmit={submitQuestion}>
+              <textarea
+                value={questionText}
+                onChange={(event) => setQuestionText(event.target.value)}
+                placeholder="Ex.: Acho que este trecho está diferente do que usamos na casa..."
+                rows={4}
+              />
+              <button type="submit"><Send size={16} /> Enviar aos responsáveis</button>
+            </form>
+
+            {questionSent && (
+              <p className="point-form-success">Mensagem enviada aos responsáveis.</p>
+            )}
+
+            {canManage && (
+              <div className="point-admin-questions">
+                <h4>Mensagens sobre este ponto</h4>
+                {pointQuestions.map((question) => (
+                  <article className={question.status === 'resolved' ? 'point-question-card resolved' : 'point-question-card'} key={question.id}>
+                    <div>
+                      <strong>{question.authorName}</strong>
+                      <small>{question.createdAt}</small>
+                      <p>{question.message}</p>
+                    </div>
+                    {question.status === 'open' ? (
+                      <button onClick={() => onResolveQuestion(question.id)}>
+                        <Check size={15} /> Marcar resolvida
+                      </button>
+                    ) : (
+                      <span className="resolved-label"><Check size={14} /> Resolvida</span>
+                    )}
+                  </article>
+                ))}
+
+                {!pointQuestions.length && (
+                  <div className="point-social-empty">
+                    <Check size={21} />
+                    <span>Nenhuma dúvida enviada sobre este ponto.</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
         </section>
       </main>
     )
@@ -179,12 +338,43 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
         </div>
       </section>
 
+      {canManage && openQuestions.length > 0 && (
+        <section className="panel point-inbox-panel">
+          <div className="section-heading">
+            <div>
+              <p className="eyebrow">Caixa de entrada</p>
+              <h3>Dúvidas pendentes dos pontos</h3>
+              <p>Mensagens enviadas por membros para Pai/Mãe de Santo e administradores.</p>
+            </div>
+            <span className="point-social-count">{openQuestions.length}</span>
+          </div>
+
+          <div className="point-inbox-list">
+            {openQuestions.map((question) => {
+              const point = points.find((item) => item.id === question.pointId)
+              return (
+                <article className="point-inbox-row" key={question.id}>
+                  <button className="point-inbox-main" onClick={() => point && setSelected(point)}>
+                    <strong>{point?.title ?? 'Ponto'}</strong>
+                    <span>{question.authorName}: {question.message}</span>
+                    <small>{question.createdAt}</small>
+                  </button>
+                  <button className="point-inbox-resolve" onClick={() => onResolveQuestion(question.id)}>
+                    <Check size={15} /> Resolver
+                  </button>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+      )}
+
       {showCreate && canManage && (
         <section className="panel inline-admin-form point-create-form">
           <form onSubmit={createPoint}>
             <input name="title" placeholder="Nome do ponto" required />
             <input name="group" placeholder="Falange/categoria" required />
-            <textarea name="content" placeholder="Conteúdo autorizado para leitura no sistema" rows={5} />
+            <textarea name="content" placeholder="Conteúdo para leitura no sistema" rows={5} />
             <button type="submit">Adicionar ponto</button>
           </form>
         </section>
@@ -203,21 +393,25 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
       </div>
 
       <section className="points-page-list">
-        {visible.map((point) => (
-          <article className="point-page-card" key={point.id}>
-            <div className="point-page-icon"><FileText size={23} /></div>
-            <div className="point-page-copy">
-              <span className="content-tag">{point.group}</span>
-              <h3>{point.title}</h3>
-              <p>{point.content ? 'Disponível para leitura' : canManage ? 'Catalogado • aguardando conteúdo' : 'Catalogado na Tenda'}</p>
-            </div>
-            <div className="point-page-actions">
-              <button onClick={() => setSelected(point)}>
-                {point.content ? 'Abrir leitura' : canManage ? 'Adicionar conteúdo' : 'Ver detalhes'}
-              </button>
-            </div>
-          </article>
-        ))}
+        {visible.map((point) => {
+          const commentCount = comments.filter((comment) => comment.pointId === point.id).length
+          return (
+            <article className="point-page-card" key={point.id}>
+              <div className="point-page-icon"><FileText size={23} /></div>
+              <div className="point-page-copy">
+                <span className="content-tag">{point.group}</span>
+                <h3>{point.title}</h3>
+                <p>{point.content ? 'Disponível para leitura' : 'Catalogado na Tenda'}</p>
+                <small className="point-comment-count"><MessageCircle size={13} /> {commentCount} comentário{commentCount === 1 ? '' : 's'}</small>
+              </div>
+              <div className="point-page-actions">
+                <button onClick={() => setSelected(point)}>
+                  {point.content ? 'Abrir ponto' : 'Ver ponto'}
+                </button>
+              </div>
+            </article>
+          )
+        })}
       </section>
 
       {!visible.length && (
@@ -226,6 +420,8 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
           <p>Nenhum ponto encontrado com esse filtro.</p>
         </section>
       )}
+
+      <p className="points-session-note">Sessão atual: {currentUserName}</p>
     </main>
   )
 }
