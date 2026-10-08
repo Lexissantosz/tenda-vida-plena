@@ -255,14 +255,18 @@ function App() {
         </section>
 
         <section className="hero-card">
-          <img src="/images/gira-caboclo.svg" alt="" className="hero-image" />
+          <img
+            src={nextEvent?.image ?? '/images/gira-caboclo.svg'}
+            alt=""
+            className={nextEvent?.image ? 'hero-image event-poster' : 'hero-image'}
+          />
           <div className="hero-shade" />
           <div className="hero-content">
             <span className="hero-kicker">Próxima atividade</span>
             <h2>{nextEvent?.title ?? 'Agenda da casa'}</h2>
             <div className="hero-meta">
               <span><CalendarDays size={17} /> {nextEvent ? new Date(`${nextEvent.date}T12:00:00`).toLocaleDateString('pt-BR') : 'A confirmar'}{nextEvent ? ` • ${nextEvent.time}` : ''}</span>
-              <span><TentTree size={17} /> Tenda de Umbanda Vida Plena</span>
+              <span><TentTree size={17} /> {nextEvent?.location ?? 'Tenda de Umbanda Vida Plena'}</span>
             </div>
             <button className="primary-button" onClick={() => navigate('Agenda')}>
               Ver detalhes <ChevronRight size={18} />
@@ -361,7 +365,7 @@ function App() {
             <div className="section-heading">
               <div>
                 <p className="eyebrow">Pontos</p>
-                <h3>Letras e referências</h3>
+                <h3>Pontos da casa</h3>
               </div>
               <button className="text-button" onClick={() => navigate('Pontos')}>
                 Ver pontos <ChevronRight size={16} />
@@ -376,7 +380,7 @@ function App() {
                     <small>{point.group}</small>
                   </div>
                   <button className="point-link" onClick={() => navigate('Pontos')}>
-                    Ver letra e referência
+                    Abrir referência
                   </button>
                 </article>
               ))}
