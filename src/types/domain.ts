@@ -39,6 +39,25 @@ export type PointItem = {
   content?: string
 }
 
+export type PointComment = {
+  id: number
+  pointId: number
+  authorName: string
+  message: string
+  createdAt: string
+}
+
+export type PointQuestionStatus = 'open' | 'resolved'
+
+export type PointQuestion = {
+  id: number
+  pointId: number
+  authorName: string
+  message: string
+  createdAt: string
+  status: PointQuestionStatus
+}
+
 export type HouseEvent = {
   id: number
   date: string
