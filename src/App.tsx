@@ -17,7 +17,7 @@ import { MaterialsPage } from './pages/MaterialsPage'
 import { AdminDashboardPage } from './pages/AdminDashboardPage'
 import { initialCalls, prototypeEvents, prototypePoints, prototypeStudies } from './data/prototypeData'
 import type { AuthScreen, SessionUser } from './types/auth'
-import type { CallItem, Contribution, HouseEvent } from './types/domain'
+import type { CallItem, Contribution, HouseEvent, PointComment, PointQuestion } from './types/domain'
 import {
   Bell,
   BookOpen,
@@ -69,6 +69,8 @@ function App() {
   const [calls, setCalls] = useState<CallItem[]>(initialCalls)
   const [events, setEvents] = useState<HouseEvent[]>(prototypeEvents)
   const [contributions, setContributions] = useState<Contribution[]>([])
+  const [pointComments, setPointComments] = useState<PointComment[]>([])
+  const [pointQuestions, setPointQuestions] = useState<PointQuestion[]>([])
   const [callModalOpen, setCallModalOpen] = useState(false)
   const [editingCall, setEditingCall] = useState<CallItem | null>(null)
   const [contributionCall, setContributionCall] = useState<CallItem | null>(null)
@@ -147,6 +149,43 @@ function App() {
     setContributionCall(null)
   }
 
+  const addPointComment = (pointId: number, message: string) => {
+    if (!sessionUser || !message.trim()) return
+    setPointComments((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        pointId,
+        authorName: sessionUser.name,
+        message: message.trim(),
+        createdAt: new Date().toLocaleString('pt-BR'),
+      },
+    ])
+  }
+
+  const askPointQuestion = (pointId: number, message: string) => {
+    if (!sessionUser || !message.trim()) return
+    setPointQuestions((current) => [
+      ...current,
+      {
+        id: Date.now(),
+        pointId,
+        authorName: sessionUser.name,
+        message: message.trim(),
+        createdAt: new Date().toLocaleString('pt-BR'),
+        status: 'open',
+      },
+    ])
+  }
+
+  const resolvePointQuestion = (questionId: number) => {
+    setPointQuestions((current) =>
+      current.map((question) =>
+        question.id === questionId ? { ...question, status: 'resolved' } : question,
+      ),
+    )
+  }
+
   const decideContribution = (contributionId: number, delivered: boolean) => {
     const contribution = contributions.find((item) => item.id === contributionId)
     if (!contribution || contribution.status !== 'pending') return
@@ -192,7 +231,19 @@ function App() {
 
     if (activeView === 'Estudos') return <StudiesPage canManage={canManageHouse} />
     if (activeView === 'Agenda') return <CalendarPage events={events} canManage={canManageHouse} onAddEvent={addEvent} />
-    if (activeView === 'Pontos') return <PointsPage canManage={canManageHouse} />
+    if (activeView === 'Pontos') {
+      return (
+        <PointsPage
+          canManage={canManageHouse}
+          currentUserName={sessionUser.name}
+          comments={pointComments}
+          questions={pointQuestions}
+          onAddComment={addPointComment}
+          onAskQuestion={askPointQuestion}
+          onResolveQuestion={resolvePointQuestion}
+        />
+      )
+    }
     if (activeView === 'Doações') return <DonationsPage onOpenCalls={() => navigate('Terreiro')} />
     if (activeView === 'Notificações') return <NotificationsPage calls={calls} events={events} />
     if (activeView === 'Materiais' && canManageHouse) return <MaterialsPage />
