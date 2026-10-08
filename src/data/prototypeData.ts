@@ -85,7 +85,7 @@ export const prototypeEvents: HouseEvent[] = [
     category: 'Gira',
     note: 'Última gira no local antes de ir pra casa nova.',
     location: 'QNL 3 CJ G Casa 4',
-    image: '/images/gira-exu-pombagira.webp',
+    image: '/images/gira-exu-pombagira-card.jpg',
   },
   { id: 2, date: '2026-10-17', title: 'Desenvolvimento', time: '19h30', category: 'Desenvolvimento', note: 'Exemplo para validação do layout.' },
   { id: 3, date: '2026-10-24', title: 'Organização e limpeza da casa', time: '15h', category: 'Organização', note: 'Exemplo para validação do layout.' },
