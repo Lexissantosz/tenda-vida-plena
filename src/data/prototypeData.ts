@@ -53,27 +53,27 @@ export const prototypeStudies: StudyItem[] = [
   },
 ]
 
-const driveSource = 'Documento original da Tenda no Google Drive'
+const internalSource = 'Acervo interno da Tenda'
 
 export const prototypePoints: PointItem[] = [
-  { id: 1, title: 'Ponto de Baiana', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1-cMGnC1FEW4qM_al9k6SUHPt_sAnSaqNlGCQ-tbN4O8/edit?usp=drivesdk' },
-  { id: 2, title: 'Maria do Balaio', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1UUC5VhKNJISMqpaUiE6HSbHccRaEeuBW4v78k46gL_w/edit?usp=drivesdk' },
-  { id: 3, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1q3-zPp5SFAFSrDSAnYLku8cpd_zSUE4C0xeIP7cpOu0/edit?usp=drivesdk' },
-  { id: 4, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1p1z1QOd29vIVaJ74aeRg00INIuxl1NQIw7ytvkNMOaE/edit?usp=drivesdk' },
-  { id: 5, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1dKx-zQRMadgjqpM6hL6QoOCUklxZoFoIaQUCC-rm-mI/edit?usp=drivesdk' },
-  { id: 6, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1IKyuxDximI4M0ysqk8o6fH2MGoT6AgWYE5NpEoX3DgQ/edit?usp=drivesdk' },
-  { id: 7, title: 'Ponto de Baiana', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1q8OVjtv4tjQg1dWAtG5gYR5bfWKn6N2yR76XiRiW2qY/edit?usp=drivesdk' },
-  { id: 8, title: 'Ponto de Baiana', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1VKRPSMblW4-C9-PTE9nUPV5rXWb8CQZ1_EdYHexhCO0/edit?usp=drivesdk' },
-  { id: 9, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1CZ7qcF-XXYYz0JxuttfvLOlOpisNrPGv9syzuXtUaPA/edit?usp=drivesdk' },
-  { id: 10, title: 'Ponto de Baianos', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1yjark_sbNZgwrNk-ITCxk-YY4S85FlyrvZRyZ-q_NX0/edit?usp=drivesdk' },
-  { id: 11, title: 'Ponto de Baiana', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1DjfkgF0U4eMX6PZQ42rgasxHaRJgpFnwLSta_WZREvY/edit?usp=drivesdk' },
-  { id: 12, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1b0uCMepEHg6stBYkZ5PfkHyU4pRxki_qdeBbJ1sIDfo/edit?usp=drivesdk' },
-  { id: 13, title: 'Ponto de baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1cams-YPf2wrpnHJ-uomTsL_TKpen0YM3hnouKBXrDt0/edit?usp=drivesdk' },
-  { id: 14, title: 'Baiano Zé do coco', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1o8RMVxTm66OJr2LUPtFjOoAOaV6slcfevl5oxnFt2Xw/edit?usp=drivesdk' },
-  { id: 15, title: 'Ponto de Baiano', group: 'Baianos', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1STwSpz_kUyuuxDS9IxPnYn8DuDN3v1PTGDdsC3QrcCU/edit?usp=drivesdk' },
-  { id: 16, title: 'Ponto de Malandro', group: 'Malandragem', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1ZqopYD0NeXFygSCRTVz2IFaMe7l-Via7Fxm2y_HQ604/edit?usp=drivesdk' },
-  { id: 17, title: 'Malandro Miguel', group: 'Malandragem', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1ehU1dlz5cgt_lihr6mI-laZc1UvwUfCgea7EM64nl60/edit?usp=drivesdk' },
-  { id: 18, title: 'Malandro Zé da lapa', group: 'Malandragem', source: driveSource, referenceUrl: 'https://docs.google.com/document/d/1nK_7wbe2gEDIBgAkBpjmtOYNMhStloaVyG2IaaWVnQ4/edit?usp=drivesdk' },
+  { id: 1, title: 'Ponto de Baiana', group: 'Baianos', source: internalSource },
+  { id: 2, title: 'Maria do Balaio', group: 'Baianos', source: internalSource },
+  { id: 3, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 4, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 5, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 6, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 7, title: 'Ponto de Baiana', group: 'Baianos', source: internalSource },
+  { id: 8, title: 'Ponto de Baiana', group: 'Baianos', source: internalSource },
+  { id: 9, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 10, title: 'Ponto de Baianos', group: 'Baianos', source: internalSource },
+  { id: 11, title: 'Ponto de Baiana', group: 'Baianos', source: internalSource },
+  { id: 12, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 13, title: 'Ponto de baiano', group: 'Baianos', source: internalSource },
+  { id: 14, title: 'Baiano Zé do coco', group: 'Baianos', source: internalSource },
+  { id: 15, title: 'Ponto de Baiano', group: 'Baianos', source: internalSource },
+  { id: 16, title: 'Ponto de Malandro', group: 'Malandragem', source: internalSource },
+  { id: 17, title: 'Malandro Miguel', group: 'Malandragem', source: internalSource },
+  { id: 18, title: 'Malandro Zé da lapa', group: 'Malandragem', source: internalSource },
 ]
 
 export const prototypeEvents: HouseEvent[] = [
