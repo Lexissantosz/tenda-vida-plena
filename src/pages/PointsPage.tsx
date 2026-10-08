@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react'
-import { ArrowLeft, BookOpen, FileText, Plus, Search } from 'lucide-react'
+import { ArrowLeft, BookOpen, FileText, Pencil, Plus, Search, X } from 'lucide-react'
 import { prototypePoints } from '../data/prototypeData'
 import type { PointItem } from '../types/domain'
 
@@ -9,6 +9,10 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<PointItem | null>(null)
   const [showCreate, setShowCreate] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editGroup, setEditGroup] = useState('')
+  const [editContent, setEditContent] = useState('')
 
   const groups = useMemo(
     () => ['Todos', ...Array.from(new Set(points.map((point) => point.group)))],
@@ -47,19 +51,86 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
     event.currentTarget.reset()
   }
 
+  const startEdit = () => {
+    if (!selected) return
+    setEditTitle(selected.title)
+    setEditGroup(selected.group)
+    setEditContent(selected.content ?? '')
+    setEditing(true)
+  }
+
+  const saveEdit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!selected || !editTitle.trim() || !editGroup.trim()) return
+
+    const updated: PointItem = {
+      ...selected,
+      title: editTitle.trim(),
+      group: editGroup.trim(),
+      content: editContent.trim() || undefined,
+    }
+
+    setPoints((current) => current.map((point) => point.id === selected.id ? updated : point))
+    setSelected(updated)
+    setEditing(false)
+  }
+
   if (selected) {
     return (
       <main className="page-content section-page">
-        <button className="back-button" onClick={() => setSelected(null)}>
+        <button className="back-button" onClick={() => {
+          setSelected(null)
+          setEditing(false)
+        }}>
           <ArrowLeft size={17} /> Voltar aos pontos
         </button>
 
         <section className="panel point-detail">
-          <span className="content-tag">{selected.group}</span>
-          <h1>{selected.title}</h1>
-          <p className="point-source">{selected.source}</p>
+          <div className="point-detail-heading">
+            <div>
+              <span className="content-tag">{selected.group}</span>
+              <h1>{selected.title}</h1>
+              <p className="point-source">{selected.source}</p>
+            </div>
 
-          {selected.content ? (
+            {canManage && (
+              <button className="point-edit-button" onClick={editing ? () => setEditing(false) : startEdit}>
+                {editing ? <X size={17} /> : <Pencil size={17} />}
+                {editing ? 'Cancelar edição' : 'Editar conteúdo'}
+              </button>
+            )}
+          </div>
+
+          {editing && canManage ? (
+            <form className="point-edit-form" onSubmit={saveEdit}>
+              <label>
+                <span>Nome</span>
+                <input value={editTitle} onChange={(event) => setEditTitle(event.target.value)} required />
+              </label>
+
+              <label>
+                <span>Falange/categoria</span>
+                <input value={editGroup} onChange={(event) => setEditGroup(event.target.value)} required />
+              </label>
+
+              <label className="point-edit-content">
+                <span>Conteúdo para leitura no sistema</span>
+                <textarea
+                  value={editContent}
+                  onChange={(event) => setEditContent(event.target.value)}
+                  rows={14}
+                  placeholder="Cole aqui o conteúdo autorizado da Tenda..."
+                />
+              </label>
+
+              <div className="point-edit-actions">
+                <button type="button" className="modal-secondary" onClick={() => setEditing(false)}>Cancelar</button>
+                <button type="submit" className="modal-primary">Salvar no protótipo</button>
+              </div>
+
+              <small>Enquanto não houver backend, esta edição fica salva somente até recarregar a página.</small>
+            </form>
+          ) : selected.content ? (
             <div className="internal-point-content">
               <BookOpen size={28} />
               <div>
@@ -72,7 +143,7 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
               <FileText size={28} />
               <div>
                 <h3>Conteúdo ainda não publicado</h3>
-                <p>Este ponto já está catalogado no sistema. A leitura será exibida aqui quando o conteúdo autorizado pela Tenda for inserido.</p>
+                <p>Este ponto já está catalogado no sistema. Um administrador pode usar “Editar conteúdo” para publicar a leitura diretamente aqui.</p>
               </div>
             </div>
           )}
@@ -138,11 +209,11 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
             <div className="point-page-copy">
               <span className="content-tag">{point.group}</span>
               <h3>{point.title}</h3>
-              <p>{point.content ? 'Disponível para leitura' : 'Catalogado • conteúdo a publicar'}</p>
+              <p>{point.content ? 'Disponível para leitura' : canManage ? 'Catalogado • aguardando conteúdo' : 'Catalogado na Tenda'}</p>
             </div>
             <div className="point-page-actions">
               <button onClick={() => setSelected(point)}>
-                {point.content ? 'Abrir leitura' : 'Ver detalhes'}
+                {point.content ? 'Abrir leitura' : canManage ? 'Adicionar conteúdo' : 'Ver detalhes'}
               </button>
             </div>
           </article>
