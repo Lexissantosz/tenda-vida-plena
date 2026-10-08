@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react'
-import { ArrowLeft, ExternalLink, FileText, Plus, Search } from 'lucide-react'
+import { ArrowLeft, BookOpen, FileText, Plus, Search } from 'lucide-react'
 import { prototypePoints } from '../data/prototypeData'
 import type { PointItem } from '../types/domain'
 
@@ -30,8 +30,8 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
     const data = new FormData(event.currentTarget)
     const title = String(data.get('title') ?? '').trim()
     const pointGroup = String(data.get('group') ?? '').trim()
-    const referenceUrl = String(data.get('referenceUrl') ?? '').trim()
-    if (!title || !pointGroup || !referenceUrl) return
+    const pointContent = String(data.get('content') ?? '').trim()
+    if (!title || !pointGroup) return
 
     setPoints((current) => [
       ...current,
@@ -39,8 +39,8 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
         id: Date.now(),
         title,
         group: pointGroup,
-        source: 'Documento indicado pela casa',
-        referenceUrl,
+        source: 'Acervo interno da Tenda',
+        content: pointContent || undefined,
       },
     ])
     setShowCreate(false)
@@ -59,17 +59,23 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
           <h1>{selected.title}</h1>
           <p className="point-source">{selected.source}</p>
 
-          <div className="drive-source-box">
-            <FileText size={28} />
-            <div>
-              <strong>Documento original da Tenda</strong>
-              <p>O sistema apenas referencia este arquivo. O conteúdo original permanece no Google Drive sem alterações.</p>
+          {selected.content ? (
+            <div className="internal-point-content">
+              <BookOpen size={28} />
+              <div>
+                <h3>Leitura do ponto</h3>
+                <p>{selected.content}</p>
+              </div>
             </div>
-          </div>
-
-          <a className="reference-button" href={selected.referenceUrl} target="_blank" rel="noreferrer">
-            <ExternalLink size={17} /> Abrir documento original
-          </a>
+          ) : (
+            <div className="internal-point-content pending">
+              <FileText size={28} />
+              <div>
+                <h3>Conteúdo ainda não publicado</h3>
+                <p>Este ponto já está catalogado no sistema. A leitura será exibida aqui quando o conteúdo autorizado pela Tenda for inserido.</p>
+              </div>
+            </div>
+          )}
         </section>
       </main>
     )
@@ -80,8 +86,8 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
       <section className="section-page-heading">
         <div>
           <p className="eyebrow">Pontos</p>
-          <h1>Pontos e referências da casa</h1>
-          <p>Os documentos cadastrados aqui apontam para os arquivos originais da Tenda, sem alterar o conteúdo do Drive.</p>
+          <h1>Pontos da casa</h1>
+          <p>Consulte os pontos diretamente no sistema, organizados por falange.</p>
         </div>
 
         <div className="page-heading-actions">
@@ -103,11 +109,11 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
       </section>
 
       {showCreate && canManage && (
-        <section className="panel inline-admin-form">
+        <section className="panel inline-admin-form point-create-form">
           <form onSubmit={createPoint}>
             <input name="title" placeholder="Nome do ponto" required />
             <input name="group" placeholder="Falange/categoria" required />
-            <input name="referenceUrl" placeholder="Link do documento original" required />
+            <textarea name="content" placeholder="Conteúdo autorizado para leitura no sistema" rows={5} />
             <button type="submit">Adicionar ponto</button>
           </form>
         </section>
@@ -132,13 +138,12 @@ export function PointsPage({ canManage = false }: { canManage?: boolean }) {
             <div className="point-page-copy">
               <span className="content-tag">{point.group}</span>
               <h3>{point.title}</h3>
-              <p>{point.source}</p>
+              <p>{point.content ? 'Disponível para leitura' : 'Catalogado • conteúdo a publicar'}</p>
             </div>
             <div className="point-page-actions">
-              <button onClick={() => setSelected(point)}>Ver detalhes</button>
-              <a href={point.referenceUrl} target="_blank" rel="noreferrer">
-                <ExternalLink size={16} /> Abrir documento
-              </a>
+              <button onClick={() => setSelected(point)}>
+                {point.content ? 'Abrir leitura' : 'Ver detalhes'}
+              </button>
             </div>
           </article>
         ))}
