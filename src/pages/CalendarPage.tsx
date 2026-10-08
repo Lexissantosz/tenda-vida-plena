@@ -37,6 +37,7 @@ export function CalendarPage({ events, canManage = false, onAddEvent }: Calendar
       time: String(data.get('time')),
       category: String(data.get('category')),
       note: String(data.get('note') || 'Evento criado no protótipo.'),
+      location: String(data.get('location') || '').trim() || undefined,
     })
     setShowCreate(false)
     event.currentTarget.reset()
@@ -60,6 +61,7 @@ export function CalendarPage({ events, canManage = false, onAddEvent }: Calendar
             <input name="date" type="date" required />
             <input name="time" placeholder="Horário" required />
             <select name="category" defaultValue="Gira">{filters.filter((item) => item !== 'Todos').map((item) => <option key={item}>{item}</option>)}</select>
+            <input name="location" placeholder="Local" />
             <input name="note" placeholder="Observação" />
             <button type="submit">Adicionar evento</button>
           </form>
@@ -103,7 +105,7 @@ export function CalendarPage({ events, canManage = false, onAddEvent }: Calendar
                 <div className="calendar-event-copy">
                   <span className="content-tag">{event.category}</span>
                   <h3>{event.title}</h3>
-                  <p>{event.time}</p>
+                  <p>{event.time}{event.location ? ` • ${event.location}` : ''}</p>
                   <small>{event.note}</small>
                 </div>
                 <CalendarDays size={20} />
