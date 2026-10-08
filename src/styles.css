@@ -3103,3 +3103,72 @@ button { border: 0; }
     object-position: center;
   }
 }
+
+
+/* Pontos internos */
+.internal-point-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+
+.internal-point-content > svg {
+  flex: 0 0 auto;
+  color: var(--gold);
+}
+
+.internal-point-content h3 {
+  margin: 0 0 8px;
+  font-family: 'Playfair Display', serif;
+}
+
+.internal-point-content p {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.internal-point-content.pending p {
+  color: var(--muted);
+}
+
+.point-create-form form {
+  grid-template-columns: 1fr 1fr;
+}
+
+.point-create-form textarea {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 140px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--text);
+  resize: vertical;
+  outline: 0;
+}
+
+.point-create-form button {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 560px) {
+  .point-create-form form {
+    grid-template-columns: 1fr;
+  }
+
+  .point-create-form textarea,
+  .point-create-form button {
+    grid-column: auto;
+  }
+
+  .internal-point-content {
+    flex-direction: column;
+  }
+}
